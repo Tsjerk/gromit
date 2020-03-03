@@ -67,11 +67,12 @@ Heads (-he):
   should separate the different beads; extra spaces are ignored.
 
   head bead types supported:
-    C = NC3 = Choline      - bead Q0, charge +1
-    E = NH3 = Ethanolamine - bead Qd, charge +1
-    G = GL0 = Glycerol     - bead P4, charge  0
-    S = CNO = Serine       - bead P5, charge  0
-    P = PO4 = Phosphate    - bead Qa, charge -1
+    C = NC3 = Choline                   - bead Q0, charge +1
+    E = NH3 = Ethanolamine              - bead Qd, charge +1
+    G = GL0 = Glycerol                  - bead P4, charge  0
+    S = CNO = Serine                    - bead P5, charge  0
+    P = PO4 = Phosphate                 - bead Qa, charge -1
+    T = TAP = Trimethylammonium propane - bead Q0, charge +1
     
   Examples of lipid heads:
     "C P" -> 'NC3 PO4' - PC - PhosphatidylCholine
