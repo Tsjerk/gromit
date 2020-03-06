@@ -313,7 +313,7 @@ while [ -n "$1" ]; do
     #=0 =======
     #=0
     -h       ) USAGE 0                              ; exit 0 ;; #==0 Display help
-    --help   ) USAGE 0                              ; exit 0 ;; #==1 Display help
+    --help   ) hlevel=9; olevel=9; USAGE 0          ; exit 0 ;; #==1 Display all help (advanced users)
     -hlevel  ) hlevel=$2                            ; shift 2; continue ;; #==1 Set level of help (use before -h/--help)
     -olevel  ) olevel=$2                            ; shift 2; continue ;; #==1 Set level of options to display
 
