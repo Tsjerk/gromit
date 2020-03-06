@@ -655,8 +655,15 @@ LASTRUN=0
 #--------------------------------------------------------------------
 
 ## 2. WORKING DIRECTORY AND SOURCE DIRECTORY ##
-# SRCDIR=$(pwd)
-[[ ! -d $DIR ]] && mkdir -p $DIR; pushd $DIR >/dev/null
+ORGDIR=$(pwd)
+if [[ ! -d $DIR ]]
+then
+    mkdir -p $DIR
+    [[ -f $MDP ]] && cp $MDP $DIR && MDP=${MDP##*/}
+    [[ -f $PDB ]] && cp $PDB $DIR && PDB=${PDB##*/}
+    [[ -f $NDX ]] && cp $NDX $DIR && NDX=${NDX##*/}
+    pushd $DIR 
+fi
 
 
 ## 3. START/STOP FLOW CONTROL ##
