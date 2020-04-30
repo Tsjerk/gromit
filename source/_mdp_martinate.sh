@@ -28,8 +28,8 @@ function init_mdp_parameters() {
     TIME=$(python -c "print int(1000*$TIME/$__mdp_cg__dt + 0.5 )") 
     AT=$(python -c "print int(1000*$AT/$__mdp_cg__dt + 0.5)") 
     __mdp_cg__nsteps=$TIME
-    __mdp_cg__nstxout=$AT
-    __mdp_cg__nstvout=0 
+    __mdp_cg__nstxout=0
+    __mdp_cg__nstvout=0
     __mdp_cg__nstfout=0
     __mdp_cg__nstlog=$AT
     __mdp_cg__nstenergy=$AT
@@ -136,7 +136,7 @@ function init_mdp_parameters() {
     __mdp_equil__nstlist=1
     __mdp_equil__nstlog=8
     __mdp_equil__nstenergy=8
-    [[ $GMXVERSION -gt 4 ]] && __mdp_cg__nstxout_compressed= || __mdp_cg__nstxtcout=0
+    [[ $GMXVERSION -gt 4 ]] && __mdp_equil__nstxout_compressed= || __mdp_equil__nstxtcout=0
     __mdp_equil__tcoupl=v-rescale
     __mdp_equil__lincs_order=6
     __mdp_equil__lincs_iter=8
