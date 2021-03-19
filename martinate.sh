@@ -1205,9 +1205,9 @@ NPROT=
 if [[ $STEP == $NOW ]]
 then
     # Output for this section:
-    GRO=$base-cg.gro
-    TOP=$base-cg.top
-    NDX=$base-cg.ndx
+    GRO=$base-mart.gro
+    TOP=$base-mart.top
+    NDX=$base-mart.ndx
     LOG=01-TOPOLOGY-CG.log
 
     OUTPUT=($GRO $TOP $NDX)
@@ -1278,7 +1278,7 @@ then
 
 	touch residuetypes.dat elements.dat
 	trash residuetypes.dat elements.dat
-	${GMX}editconf -f $base-mart.pdb -o $base-mart.gro -box 100 100 100 -noc >/dev/null 2>&1
+	${GMX}editconf -f $base-mart.pdb -o $base-mart-pbc.gro -box 100 100 100 -noc >/dev/null 2>&1
 
         # Have to energy minimize output structure for stability
 	#__mdp_mart__pbc=no
@@ -1287,8 +1287,8 @@ then
 	OUT=$base-mart-EM.gro
 	
 	mdp_options ${OPT[@]} > $MDP
-	MDRUNNER -f $MDP -c $base-mart.gro -p $TOP -o $OUT -n $base-mart.ndx -np 1 -l $LOG -force $FORCE $TABLES
-	echo 0 | ${GMX}trjconv -s $base-mart.gro -f $OUT -pbc nojump -o $base-mart-nj.gro >/dev/null 2>&1
+	MDRUNNER -f $MDP -c $base-mart-pbc.gro -p $TOP -o $base-mart-em.gro -n $base-mart.ndx -np 1 -l $LOG -force $FORCE $TABLES
+	echo 0 | ${GMX}trjconv -s $base-mart-em.gro -f $OUT -pbc nojump -o $base-mart-nj.gro >/dev/null 2>&1
 	mv $base-mart-nj.gro $OUT
 
         # trash $base-mart.gro
@@ -1297,8 +1297,19 @@ then
 fi
 
 # If $GRO is not set, we set it equal to $pdb
-[[ -z $GRO ]] && GRO=$pdb
-
+if [[ -z $GRO || ${pdb##*.} != "gro" ]]
+then
+    if [[ -e "$base-mart.gro" ]]
+    then
+	GRO="$base-mart.gro"
+    elif [[ ${pdb##*.} == "gro" ]]
+    then
+	GRO=$pdb
+    else
+	exit_error "There should be a martini GRO file at this point, called $base.gro, $base-cg.gro or $base-mart.gro"
+    fi
+fi
+    
 # NPROT may be set, but if we skipped this step it's not
 # If it is not set, then the input could be solute (prot/nucl) and/or membrane
 NPROT=$(LSED -n '2{p;q;}' "$GRO")
@@ -1306,7 +1317,6 @@ NPROT=$(LSED -n '2{p;q;}' "$GRO")
 # END OF COARSE GRAINING
 [[ $STOP ==   $NOW     ]] && exit_clean
 [[ $STEP == $((NOW++)) ]] && : $((STEP++))
-
 
 #---------------------------------------------------------------------
 SHOUT "---STEP 1C: SOLVATE"
