@@ -1318,6 +1318,7 @@ NPROT=$(LSED -n '2{p;q;}' "$GRO")
 [[ $STOP ==   $NOW     ]] && exit_clean
 [[ $STEP == $((NOW++)) ]] && : $((STEP++))
 
+
 #---------------------------------------------------------------------
 SHOUT "---STEP 1C: SOLVATE"
 #---------------------------------------------------------------------
@@ -1338,12 +1339,14 @@ then
 fi
 
 
+# Output for this section:
+OUT=$base-cg.gro
+TOP=$base-cg.top
+NDX=$base-cg.ndx
+
+
 if [[ $STEP == $NOW ]]
 then
-    # Output for this section:
-    OUT=$base-cg.gro
-    TOP=$base-cg.top
-    NDX=$base-cg.ndx
     LOG=01-SOLVENT.log
 
     OUTPUT=($OUT $NDX)
@@ -1495,6 +1498,7 @@ then
 
     GRO=$OUT
 else
+    echo ====== "$NDX"
     # We did not make a topology, but there should be an index file.
     NPROT=$(LSED -n '/\[ *Solute/,/\[/{/\[/d;p;}' "$NDX" | wc -w)
     NMEM=$(LSED -n '/\[ *Membrane/,/\[/{/\[/d;p;}' "$NDX" | wc -w)
