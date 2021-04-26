@@ -363,7 +363,7 @@ while [ -n "$1" ]; do
     #=1
     -T       ) Temperature=$2                       ; shift 2; continue ;; #==1 Temperature
     -P       ) Pressure=$2                          ; shift 2; continue ;; #==1 Pressure
-    -salt    ) Salinity=$2                          ; shift 2; continue ;; #==1 Salt concentration
+#    -salt    ) Salinity=$2                          ; shift 2; continue ;; #==1 Salt concentration
     -dt      ) DELT=$2                              ; shift 2; continue ;; #==2 Integration time step
     -time    ) TIME=$2                              ; shift 2; continue ;; #==1 Production simulation time
     -at      ) AT=$2                                ; shift 2; continue ;; #==1 Output sampling frequency
