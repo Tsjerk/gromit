@@ -198,13 +198,13 @@ function MDRUNNER ()
 
     # In most cases, the monitor finishes before the run.
     # The exit code then tells what to do (see below).
-    trap "terminate $MDPID $MONID" SIGHUP SIGINT SIGTERM SIGCHLD
+    trap "terminate $MDPID $MONID" SIGHUP SIGINT SIGTERM
 
     wait $MONID
     MONEXIT=$?
     echo MONITOR EXIT: $MONEXIT
   else
-    trap "terminate $MDPID" SIGHUP SIGINT SIGTERM SIGCHLD
+    trap "terminate $MDPID" SIGHUP SIGINT SIGTERM
   fi
 
 
