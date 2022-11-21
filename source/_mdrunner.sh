@@ -126,7 +126,7 @@ function MDRUNNER ()
     # With custom ligand topologies we may get warnings about overriding parameters. This should be fine? :S
     GROMPP="${GMX}grompp $fnMDP -c $fnIN -r $fnIN -p $fnTOP $fnNDX -o $baseOUT.tpr $(program_options grompp) -maxwarn -1"
 
-    echo "$GROMPP" | tee $LOG
+    YELLOW "$GROMPP" | tee $LOG
     echo ": << __GROMPP__" >>$LOG
     $GROMPP >>$LOG 2>&1 || exit_error "Execution of grompp failed in routine MDRUNNER. More information in $LOG."
     echo "__GROMPP__" >>$LOG
@@ -164,9 +164,7 @@ function MDRUNNER ()
 
   # Set up the mdrun command and start it in the background 
   MDRUN="${GMX}mdrun -nice 0 -deffnm $baseOUT -c $fnOUT -cpi $baseOUT.cpt -nt $NP $SPLIT $(program_options mdrun) -maxh $MAXH"
-  echo
-  echo "$MDRUN" | tee -a $fnLOG
-  echo
+  YELLOW "$MDRUN" | tee -a $fnLOG
   $MDRUN >>$fnLOG 2>&1 &
   local -i MDPID=$!
   writeToLog "MDRUN PID: $MDPID"

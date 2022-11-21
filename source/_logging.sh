@@ -38,6 +38,10 @@ function FATAL() { [[ $STEP == $NOW ]] && echo -e "$RED" && LINES "$@" | $SED 's
 # Print in yellow with lines and preceding '# NOTE: '
 function NOTE()  { [[ $STEP == $NOW ]] && echo -e "$YEL" && LINES "$@" | $SED 's/^/# NOTE: /' && echo -e "$OFF"; }
 
+# Print in yellow
+function YELLOW() { [[ $STEP == $NOW ]] && echo -e "$YEL" && echo "$@" && echo -e "$OFF"; }
+
+
 ## Execution
 
 # Macro to do stuff only if the step is to be executed
