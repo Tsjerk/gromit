@@ -1198,7 +1198,7 @@ SHOUT "---STEP 1B: GENERATE COARSE GRAINED STRUCTURE AND TOPOLOGY"
 GRO=$PDB
 if [[ $STEP == $NOW ]]
 then
-    [[ -n $DAFT  ]] && : $((STEP++))
+    [[ -n $DAFT || -z $PDB ]] && : $((STEP++))
 fi
 
 NPROT=
@@ -1284,11 +1284,11 @@ then
 	#__mdp_mart__pbc=no
 	MDP=em-mart.mdp
 	OPT=(em $MDPMS mart)
-	OUT=$base-mart-EM.gro
-	
+	OUT=$base-mart.gro
+
 	mdp_options ${OPT[@]} > $MDP
-	MDRUNNER -f $MDP -c $base-mart-pbc.gro -p $TOP -o $base-mart-em.gro -n $base-mart.ndx -np 1 -l $LOG -force $FORCE $TABLES
-	echo 0 | ${GMX}trjconv -s $base-mart-em.gro -f $OUT -pbc nojump -o $base-mart-nj.gro >/dev/null 2>&1
+	MDRUNNER -f $MDP -c $base-mart-pbc.gro -p $TOP -o $OUT -n $base-mart.ndx -np 1 -l $LOG -force $FORCE $TABLES
+	echo 0 | ${GMX}trjconv -s $base-mart.gro -f $OUT -pbc nojump -o $base-mart-nj.gro # >/dev/null 2>&1
 	mv $base-mart-nj.gro $OUT
 
         # trash $base-mart.gro
@@ -1297,19 +1297,22 @@ then
 fi
 
 # If $GRO is not set, we set it equal to $pdb
-if [[ -z $GRO || ${pdb##*.} != "gro" ]]
+if [[ -n $PDB ]]
 then
-    if [[ -e "$base-mart.gro" ]]
+    if [[ -z $GRO || ${pdb##*.} != "gro" ]]
     then
-	GRO="$base-mart.gro"
-    elif [[ ${pdb##*.} == "gro" ]]
-    then
-	GRO=$pdb
-    else
-	exit_error "There should be a martini GRO file at this point, called $base.gro, $base-cg.gro or $base-mart.gro"
+        if [[ -e "$base-mart.gro" ]]
+        then
+	    GRO="$base-mart.gro"
+        elif [[ ${pdb##*.} == "gro" ]]
+        then
+	    GRO=$pdb
+        else
+	    exit_error "There should be a martini GRO file at this point, called $base.gro, $base-cg.gro or $base-mart.gro"
+        fi
     fi
 fi
-    
+
 # NPROT may be set, but if we skipped this step it's not
 # If it is not set, then the input could be solute (prot/nucl) and/or membrane
 NPROT=$(LSED -n '2{p;q;}' "$GRO")
@@ -1383,7 +1386,7 @@ then
 	INSANE="$INSANE -sol $SOL"
     fi
 
-    [[ -n $pdb ]] && INSANE="$INSANE -o $OUT -f $base-mart-EM.gro" || INSANE="$INSANE -o $OUT -p $TOP"
+    [[ -n $pdb ]] && INSANE="$INSANE -o $OUT -f $base-mart.gro" || INSANE="$INSANE -o $OUT -p $TOP"
 
     echo "$INSANE"
 
