@@ -31,10 +31,14 @@ function load_gromacs() {
     
     # Version 2016 uses lower case "version", which is potentially ambiguous, so match carefully
     [[ -z $GMXVERSION ]] && GMXVERSION=$(gmx -h 2>&1 | $SED -n '/^GROMACS:.*gmx, version \([^ ]*\).*$/{s//\1/p;q;}')
-    ifs=$IFS; IFS="."; GMXVERSION=($GMXVERSION); IFS=$ifs
+
+    # Later versions use a different header...
+    [[ -z $GMXVERSION ]] && GMXVERSION=$(gmx -h 2>&1 | $SED -n '/^ *:-. GROMACS - gmx, \(.*\) .-:$/{s//\1/p;q;}')    
+    
+    ifs=$IFS; IFS="."; GMXMAJOR=($GMXVERSION); IFS=$ifs
     
     # Set the directory for binaries
-    [[ $GMXVERSION -gt 4 ]] && GMXBIN=$(which gmx) || GMXBIN=$(which mdrun)
+    [[ $GMXMAJOR -gt 4 ]] && GMXBIN=$(which gmx) || GMXBIN=$(which mdrun)
     
     # Extract the directory
     GMXBIN=${GMXBIN%/*}
@@ -45,7 +49,7 @@ function load_gromacs() {
     # Set the command prefix and set the GMXLIB variable to point to 
     # the force field data and such.
     # In some cases, 'gromacs' is part of $GMXDATA
-    if [[ $GMXVERSION -gt 4 ]]
+    if [[ $GMXMAJOR -gt 4 ]]
     then
       GMX="$GMXBIN/gmx " 
       GMXLIB=
@@ -54,7 +58,9 @@ function load_gromacs() {
       export GMXLIB=${GMXDATA}/gromacs/top
       [[ -d $GMXLIB ]] || export GMXLIB=${GMXDATA%/gromacs*}/gromacs/top
     fi
-    
+
+    echo "# Gromacs version $GMXVERSION in $GMXBIN"
+
     # Now finally, test a command and see if it works
     # otherwise raise a fatal error.
     ${GMX}grompp -h >/dev/null 2>&1 || executable_not_found_error "GROMACS (GMXRC)"
