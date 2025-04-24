@@ -15,8 +15,8 @@ function init_mdp_parameters() {
     fi
     
     # Output parameters
-    TIME=$(python -c "print int(1000*$TIME/$__mdp_md__dt + 0.5 )") 
-    AT=$(python -c "print int(1000*$AT/$__mdp_md__dt + 0.5)") 
+    TIME=$(python3 -c "print(int(1000*$TIME/$__mdp_md__dt + 0.5 ))") 
+    AT=$(python3 -c "print(int(1000*$AT/$__mdp_md__dt + 0.5))") 
     __mdp_md__nsteps=$TIME
     __mdp_md__nstxout=$AT
     __mdp_md__nstvout=0 
@@ -122,7 +122,7 @@ function init_mdp_parameters() {
     # Equilibration runs: position restraints, NVT, NPT
     
     # Position restraints are relieved at step 7
-    TIME=$(python -c "print int(1000*$EquilTime/$__mdp_md__dt + 0.5 )")
+    TIME=$(python3 -c "print(int(1000*$EquilTime/$__mdp_md__dt + 0.5 ))")
     __mdp_equil__define=-DPOSRES
     __mdp_equil__nsteps=$TIME
     __mdp_equil__nstlog=10

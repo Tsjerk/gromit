@@ -25,8 +25,8 @@ function init_mdp_parameters() {
     fi
     
     # Output parameters
-    TIME=$(python -c "print int(1000*$TIME/$__mdp_cg__dt + 0.5 )") 
-    AT=$(python -c "print int(1000*$AT/$__mdp_cg__dt + 0.5)") 
+    TIME=$(python3 -c "print(int(1000*$TIME/$__mdp_cg__dt + 0.5 ))") 
+    AT=$(python3 -c "print(int(1000*$AT/$__mdp_cg__dt + 0.5))") 
     __mdp_cg__nsteps=$TIME
     __mdp_cg__nstxout=0
     __mdp_cg__nstvout=0
