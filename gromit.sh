@@ -1791,7 +1791,7 @@ then
 
     # a. Basic stuff
     SolFile=${SolFile:-$SolModel}
-    [[ $GMXVERSION -gt 4 ]] && SOLVATE="$GMXBIN/gmx solvate" || SOLVATE=$GMXBIN/genbox
+    [[ $GMXMAJOR -gt 4 ]] && SOLVATE="$GMXBIN/gmx solvate" || SOLVATE=$GMXBIN/genbox
     SOLVATE="$SOLVATE -cp $GRO -cs $SolFile -o $base-sol-b4ions.gro"
 
     # b. Add program specific options from command line
@@ -1867,7 +1867,7 @@ then
     #    Combine the topology and structure, yielding a full listing of atoms and charges
     echo nsteps=1 > empty.mdp
     tag="sol-b4ions"
-    GROMPP="${GMX}grompp -v -f empty.mdp -c $base-$tag.gro -r $base-$tag.gro -p $base-$tag.top -o $base-$tag.tpr -po defaults.mdp -maxwarn -1"
+    GROMPP="${GMX}grompp -v -f empty.mdp -c $base-$tag.gro -r $base-$tag.gro -p $base-$tag.top -o $base-$tag.tpr -po defaults.mdp -maxwarn 100"
 
 
     # b. Tell what is happening
@@ -1892,7 +1892,7 @@ then
 	then
 	    printf "%5d %5d %5d %5d %5d\n" $(SEQ ${Ligenv[@]}) | $SED $'s/ 0//g;1s/^/[ check ]\\\n/' > charge.ndx
 	    NDX="-n charge.ndx"
-	    [[ $GMXVERSION -gt 4 ]] && TPRCONV="$GMXBIN/gmx tpr-convert" || TPRCONV="$GMXBIN/tpbconv"
+	    [[ $GMXMAJOR -gt 4 ]] && TPRCONV="$GMXBIN/gmx tpr-convert" || TPRCONV="$GMXBIN/tpbconv"
 	    $TPRCONV -s $base-sol-b4ions.tpr -o $base-sol-b4ions-noligand.tpr -n charge.ndx >/dev/null 2>&1
             NCHARGE=$(getCharge $base-sol-b4ions-noligand.tpr)
 	    trash charge.ndx $base-sol-b4ions-noligand.tpr
@@ -2470,7 +2470,7 @@ then
 
     for edr in *-MD.part*.edr
     do
-        [[ $GMXVERSION -gt 4 ]] && ENE="$GMXBIN/gmx energy" || ENE=$GMXBIN/g_energy
+        [[ $GMXMAJOR -gt 4 ]] && ENE="$GMXBIN/gmx energy" || ENE=$GMXBIN/g_energy
 	echo $terms | $ENE -f $edr -o ${edr%.edr}.xvg 2>/dev/null | $SED '/^Energy/,/^ *$/{/^ *$/q}' > ${edr%.edr}.lie
     done
 fi

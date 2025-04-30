@@ -33,10 +33,10 @@ function init_mdp_parameters() {
     __mdp_cg__nstfout=0
     __mdp_cg__nstlog=$AT
     __mdp_cg__nstenergy=$AT
-    [[ $GMXVERSION -gt 4 ]] && __mdp_cg__nstxout_compressed=$AT || __mdp_cg__nstxtcout=$AT
+    [[ $GMXMAJOR -gt 4 ]] && __mdp_cg__nstxout_compressed=$AT || __mdp_cg__nstxtcout=$AT
     
     # Nonbonded interactions
-    if [[ $GMXVERSION -gt 4 ]]
+    if [[ $GMXMAJOR -gt 4 ]]
     then
       # GMX 5 parameters from De Jong, Baoukina and Marrink
       __mdp_cg__cutoff_scheme=Verlet
@@ -136,7 +136,7 @@ function init_mdp_parameters() {
     __mdp_equil__nstlist=1
     __mdp_equil__nstlog=8
     __mdp_equil__nstenergy=8
-    [[ $GMXVERSION -gt 4 ]] && __mdp_equil__nstxout_compressed= || __mdp_equil__nstxtcout=0
+    [[ $GMXMAJOR -gt 4 ]] && __mdp_equil__nstxout_compressed= || __mdp_equil__nstxtcout=0
     __mdp_equil__tcoupl=v-rescale
     __mdp_equil__lincs_order=6
     __mdp_equil__lincs_iter=8

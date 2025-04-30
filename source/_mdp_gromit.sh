@@ -4,8 +4,8 @@ function init_mdp_parameters() {
     # Global parameters
     
     __mdp_md__dt=0.002
-    [[ $GMXVERSION -gt 4 ]] && __mdp_md__nstlist=10 || __mdp_md__nstlist=5
-    [[ $GMXVERSION -gt 4 ]] && __mdp_md__cutoff_scheme=Verlet
+    [[ $GMXMAJOR -gt 4 ]] && __mdp_md__nstlist=10 || __mdp_md__nstlist=5
+    [[ $GMXMAJOR -gt 4 ]] && __mdp_md__cutoff_scheme=Verlet
     
     # Virtual site specific
     if $VirtualSites; then
@@ -23,7 +23,7 @@ function init_mdp_parameters() {
     __mdp_md__nstfout=0
     __mdp_md__nstlog=$AT
     __mdp_md__nstenergy=$AT
-    [[ $GMXVERSION -gt 4 ]] && __mdp_md__nstxout_compressed=$AT || __mdp_md__nstxtcout=$AT
+    [[ $GMXMAJOR -gt 4 ]] && __mdp_md__nstxout_compressed=$AT || __mdp_md__nstxtcout=$AT
     
     # Coupling
     # Listed here are the overall controls. Specific controls
@@ -80,7 +80,7 @@ function init_mdp_parameters() {
     __mdp_gromos__epsilon_rf=54
     
     # CHARMM
-    if [[ $GMXVERSION -gt 4 ]]
+    if [[ $GMXMAJOR -gt 4 ]]
     then
       __mdp_charmm__constraints=h-bonds
       __mdp_charmm__cutoff_scheme=Verlet
@@ -128,7 +128,7 @@ function init_mdp_parameters() {
     __mdp_equil__nstlog=10
     __mdp_equil__nstenergy=10
 
-    [[ $GMXVERSION -gt 4 ]] && __mdp_equil__nstxout_compressed=0 || __mdp_equil__nstxtcout=0
+    [[ $GMXMAJOR -gt 4 ]] && __mdp_equil__nstxout_compressed=0 || __mdp_equil__nstxtcout=0
     
     # Velocities are only generated once
     # After the first NVT/PR cycle 'genvel' is set to no
