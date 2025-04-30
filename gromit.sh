@@ -2256,7 +2256,7 @@ SHOUT "---STEP 7: UNRESTRAINED MD 20 ps NPT -- CYCLE THROUGH PRESSURE/TAU_P"
 #----------------------------------------------------------------------------
 
 # Turning on the pressure
-__mdp_md__pcoupl=Berendsen
+__mdp_md__pcoupl=c-rescale
 
 # Relieve position restraints
 __mdp_equil__define=
