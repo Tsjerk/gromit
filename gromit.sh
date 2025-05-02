@@ -720,13 +720,31 @@ echo
 #trap "archive" 2 9 15
 
 
+#--------------------------------------------------------------------
+#---FORCE FIELD
+#--------------------------------------------------------------------
+
+# If the force field is given as directory... (like charmm36)
+ForceFieldName=$(basename $ForceField)
+
 # Set the forcefield tag
-case $ForceField in
+case $ForceFieldName in
   gromos*) ForceFieldFamily=gromos;;
   amber*)  ForceFieldFamily=amber;;
   charmm*) ForceFieldFamily=charmm;;
   opls*)   ForceFieldFamily=opls;;
 esac
+
+if [[ "${ForceFieldName%.ff}" != "${ForceFieldName}" ]]
+then
+    ln -s $ForceField .
+    ForceFieldSelection=1
+    ForceFieldName=
+else
+    ForceFieldSelection=
+    ForceFieldName="-ff $ForceFieldName"
+fi
+
 
 
 #--------------------------------------------------------------------
@@ -752,7 +770,7 @@ then
     then
       WaterModel=${ForceFieldSolvents[$i]}
       SolModel=$WaterModel
-      SolventTopology=$ForceField.ff/$WaterModel.itp
+      SolventTopology=${ForceField%.ff}.ff/$WaterModel.itp
       [[ -z $SolFile ]] && SolFile=${SolventFiles[$i]}
     fi
   done
@@ -1076,7 +1094,7 @@ OUTPUT=($base.top $base.gro)
 ## I. pdb2gmx
 
 # 1. Basic stuff
-PDB2GMX="${GMX}pdb2gmx -v -f $dirn/$pdb -o $base.gro -p $base.top -ignh -ff $ForceField -water $WaterModel"
+PDB2GMX="${GMX}pdb2gmx -v -f $dirn/$pdb -o $base.gro -p $base.top -ignh $ForceFieldName -water $WaterModel"
 
 # 2. Position restraints
 #    * The position restraint fc (-posrefc) is bogus and
@@ -1148,10 +1166,10 @@ then
 
     # The following lines echo the command to the log
     # and capture the results as a here-document
-    echo "echo $GMXQUERY | $PDB2GMX" | tee -a $LOG
+    echo "echo $ForceFieldSelection $GMXQUERY | $PDB2GMX" | tee -a $LOG
     echo ": << __PDB2GMX__" >>$LOG
     ERROR="Generation of topology with pdb2gmx failed. Probably the input structure has issues. Check $LOG for more information."
-    echo $GMXQUERY | $PDB2GMX >>$LOG 2>&1 # || exit_error $ERROR
+    echo  $ForceFieldSelection $GMXQUERY | $PDB2GMX >>$LOG 2>&1 # || exit_error $ERROR
     EXITCODE=$?
     echo "__PDB2GMX__" >>$LOG
     [[ $EXITCODE == 0 ]] || pdb2gmx_error $LOG
@@ -1468,7 +1486,7 @@ then
     else
 	# We don't have a topology yet.
 	# Build one!
-	echo -e "#include \"$ForceField.ff/forcefield.itp\"\n#include \"$SolventTopology\"" > $base-lig.top
+	echo -e "#include \"${ForceField%.ff}.ff/forcefield.itp\"\n#include \"$SolventTopology\"" > $base-lig.top
     fi
 
     #     b. Add include statements for ligands. Only add each file once
@@ -1753,7 +1771,7 @@ if [[ -z $TOP ]]
 then
     TOP=$base.top
     cat << __TOP__ > $base.top
-#include "$ForceField.ff/forcefield.itp
+#include "${ForceField%.ff}.ff/forcefield.itp
 
 [ system ]
 Box of solvent, maybe with ions
@@ -1827,7 +1845,7 @@ then
 	if ! grep -q '#include.*'$SolventTopology $TOP
 	then
 	    # Check if the topology for the solvent is here or there
-	    #[[ -f $SolventTopology ]] || SolventTopology=$ForceField.ff/$SolventTopology
+	    #[[ -f $SolventTopology ]] || SolventTopology=${ForceField%.ff}.ff/$SolventTopology
 	    $SED -i.bck '/^\[ *system *\]/s,^,#include "'$SolventTopology$'"\\\n\\\n,' $base-sol-b4ions.top
 	fi
     fi
@@ -2010,7 +2028,7 @@ then
 	    exit_error "Moleculetype definition found in $TOP for ion $NNAM, but none found for $PNAM"
 	else
 	    N='\'$'\n'
-	    grep -q '#include.*ions.itp' $base-sol-b4ions.top || IONSITP=$'/^\[ *system *\]/s,^,#include "'$ForceField.ff/'ions.itp"'$N$N','
+	    grep -q '#include.*ions.itp' $base-sol-b4ions.top || IONSITP=$'/^\[ *system *\]/s,^,#include "'${ForceField%.ff}.ff/'ions.itp"'$N$N','
 	fi
         LSED -e "/B4IONS/d;$IONSITP;" $base-sol-b4ions.top > $base-sol.top
         printf "$SolName %17d\n$PNAM %17d\n$NNAM %17d" $(( NSOL - U - V )) $U $V >> $base-sol.top	
