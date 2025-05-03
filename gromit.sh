@@ -1842,7 +1842,7 @@ then
     if [[ ! $MOLTYPES =~ $SolName ]]
     then
 	# check if a file is #included with the solvent model
-	if ! grep -q '#include.*'$SolventTopology $TOP
+	if ! grep -q '#include.*'$WaterModel.itp $TOP
 	then
 	    # Check if the topology for the solvent is here or there
 	    #[[ -f $SolventTopology ]] || SolventTopology=${ForceField%.ff}.ff/$SolventTopology
