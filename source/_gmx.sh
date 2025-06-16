@@ -23,7 +23,10 @@ function load_gromacs() {
     [[ $GMXRC ]] && source $GMXRC 
     
     # Find out which Gromacs version this is
-    GMXVERSION=$(mdrun -h 2>&1 | $SED -n '/^.*VERSION \([^ ]*\).*$/{s//\1/p;q;}')
+    GMXVERSION=$(gmx --version 2>/dev/null | sed -n 's/GROMACS version: *//p')
+
+    # Old versions didn't have a gmx master module
+    [[ -z GMXVERSION ]] && GMXVERSION=$(mdrun -h 2>&1 | $SED -n '/^.*VERSION \([^ ]*\).*$/{s//\1/p;q;}')
     
     # From version 5.0.x on, the commands are gathered in one 'gmx' program
     # The original commands are aliased, but there is no guarantee they will always remain
