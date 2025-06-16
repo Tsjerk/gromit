@@ -905,6 +905,7 @@ function getCharge ()
   dump=$(which gmxdump)
   [[ -n ${dump} ]] || dump=$(which gmx)
   [[ -n ${dump} ]] || FATAL gmx and gmxdump not found, cannot determine charge of system from tpr file
+  [[ ${dump} == $(which gmx) ]] && dump="$dump dump"
   ${dump} -s $1 2>&1 | awk "$AWK_TPR_MOLNAME $AWK_TPR_MOLTYPE $AWK_TPR_MOLNUM $AWK_TPR_CHARGE $AWK_TPR_END"
 }
 
