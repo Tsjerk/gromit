@@ -2170,7 +2170,10 @@ else
 fi
 
 __mdp_md__tc_grps=$(    $SED 's/ /,/g' <<< ${CoupleGroups[@]})
-__mdp_md__energygrps=$( $SED 's/ /,/g' <<< ${EnergyGroups[@]})
+
+# Energygroups disallow using GPUs.
+# Handle this after simulation with gmx mdrun -rerun
+# __mdp_md__energygrps=$( $SED 's/ /,/g' <<< ${EnergyGroups[@]})
 
 # Only print stuff if we actually execute this step
 
